@@ -1,0 +1,2 @@
+spring.application.name: spice
+server.port: 8082
