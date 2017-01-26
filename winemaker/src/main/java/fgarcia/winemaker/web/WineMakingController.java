@@ -1,9 +1,13 @@
 package fgarcia.winemaker.web;
 
-import fgarcia.winemaker.feign.WarmerClient;
 import fgarcia.winemaker.feign.SpiceClient;
+import fgarcia.winemaker.feign.WarmerClient;
 import fgarcia.winemaker.feign.WineClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.sleuth.Span;
+import org.springframework.cloud.sleuth.Tracer;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,15 +21,20 @@ import java.util.concurrent.Future;
 @RestController
 public class WineMakingController {
 
+    private static final Logger logger = LoggerFactory.getLogger(WineMakingController.class);
+
     private WineClient wineClient;
     private SpiceClient spiceClient;
     private WarmerClient warmerClient;
 
+    private Tracer tracer;
+
     @Autowired
-    public WineMakingController(WineClient wineClient, SpiceClient spiceClient, WarmerClient warmerClient) {
+    public WineMakingController(WineClient wineClient, SpiceClient spiceClient, WarmerClient warmerClient, Tracer tracer) {
         this.wineClient = wineClient;
         this.spiceClient = spiceClient;
         this.warmerClient = warmerClient;
+        this.tracer = tracer;
     }
 
     /**
@@ -38,6 +47,8 @@ public class WineMakingController {
         long startTime = System.currentTimeMillis();
         StringBuilder res = new StringBuilder();
 
+        getABottle();
+
         // Call add winemaker
         Future<String> fullGlass = wineClient.pourWine().queue();
 
@@ -48,5 +59,13 @@ public class WineMakingController {
         // heat the wine
         res.append(warmerClient.heatWine());
         return res + "Total prepare time = " + (System.currentTimeMillis() - startTime);
+    }
+
+    private void getABottle() throws InterruptedException {
+        Span s = tracer.createSpan("Bottle Span");
+        logger.info("Am I sampled ?");
+        tracer.addTag("red", "wine");
+        Thread.sleep(100);
+        tracer.close(s);
     }
 }
