@@ -45,20 +45,21 @@ public class WineMakingController {
     @RequestMapping(value = "/make", method = RequestMethod.GET)
     public String serveMulledWine() throws ExecutionException, InterruptedException {
         long startTime = System.currentTimeMillis();
-        StringBuilder res = new StringBuilder();
-
         getABottle();
 
         // Call add winemaker
         Future<String> fullGlass = wineClient.pourWine().queue();
-
         // Call add spices
         Future<String> spicedWine = spiceClient.addSpice().queue();
-        res.append(fullGlass.get()).append(spicedWine.get());
+
+        fullGlass.get();
+        spicedWine.get();
 
         // heat the wine
-        res.append(warmerClient.heatWine());
-        return res + "Total prepare time = " + (System.currentTimeMillis() - startTime);
+        warmerClient.heatWine();
+
+        //return res + "Total prepare time = " + ;
+        return "Served in " + (System.currentTimeMillis() - startTime) + " by " + tracer.getCurrentSpan().traceIdString();
     }
 
     private void getABottle() throws InterruptedException {

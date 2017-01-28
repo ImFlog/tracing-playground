@@ -20,6 +20,6 @@ public class WineApplication {
     @RequestMapping(value = "/pourWine", method = RequestMethod.GET)
     public String pourWine() throws InterruptedException {
         Thread.sleep(300);
-        return "1.5L of Bordeaux red wine\n";
+        return "Here is wine";
     }
 }

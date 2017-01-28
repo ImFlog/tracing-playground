@@ -17,6 +17,6 @@ public class SpiceApplication {
     @RequestMapping(value = "/addSpice", method = RequestMethod.GET)
     public String addSpice() throws InterruptedException {
         Thread.sleep(100);
-        return "Cinamon + Ginger \n";
+        return "Some spice !";
     }
 }

@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+
 @SpringBootApplication
 @RestController
 public class WarmApplication {
@@ -15,12 +16,8 @@ public class WarmApplication {
     }
 
     @RequestMapping(value = "/warm", method = RequestMethod.GET)
-    public String warm() throws InterruptedException {
-        putOnFire();
-        return "It's hot !\n";
-    }
-
-    private synchronized void putOnFire() throws InterruptedException {
-        Thread.sleep(1000);
+    public synchronized String warm() throws InterruptedException {
+        Thread.sleep(500);
+        return "It's hot in here";
     }
 }
