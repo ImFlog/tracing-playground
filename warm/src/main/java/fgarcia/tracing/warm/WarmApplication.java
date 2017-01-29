@@ -17,7 +17,7 @@ public class WarmApplication {
 
     @RequestMapping(value = "/warm", method = RequestMethod.GET)
     public synchronized String warm() throws InterruptedException {
-        Thread.sleep(500);
+        Thread.sleep(1000);
         return "It's hot in here";
     }
 }

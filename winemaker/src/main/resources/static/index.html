@@ -9,29 +9,30 @@
       integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
 <body>
-<h1>Mulled wine application</h1>
-<br/>
-<div class="col-md-6">
-    <button type="button" class="btn btn-default" id="clickButton">I want wine !</button>
-    <div id="result"></div>
-</div>
-<div class="col-md-6">
-    <img src="wine.jpg" alt="Hummmm mulled wine" style="height:80%" class="img-thumbnail"/>
-</div>
-
-
+    <h1>Mulled wine application</h1>
+    <br/>
+    <div class="col-md-6">
+        <button type="button" class="btn btn-default" id="clickButton">We want wine</button>
+        <div id="result"></div>
+    </div>
+    <div class="col-md-6">
+        <img src="wine.jpg" alt="Hummmm mulled wine" style="height:80%" class="img-thumbnail"/>
+    </div>
 </body>
 
 <script type="text/javascript">
+    var callMake = function() {
+        $.ajax({
+            url: "/make"
+        }).done(function(result) {
+            $("#result").append("<br/>" + result);
+        });
+    };
+
     $(document).ready(function() {
         $("#clickButton").on("click", function() {
-            $.ajax({
-                url: "/make"
-            }).done(function(result) {
-                $("#result").append("<br/>" + result);
-            });
+            setInterval(callMake, 1000);
         })
-        return false;
     });
 
 </script>
