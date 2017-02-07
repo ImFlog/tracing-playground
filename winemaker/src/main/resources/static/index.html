@@ -11,12 +11,13 @@
 <body>
     <h1>Mulled wine application</h1>
     <br/>
-    <div class="col-md-6">
-        <button type="button" class="btn btn-default" id="clickButton">We want wine</button>
-        <div id="result"></div>
+    <div class="col-md-8">
+        <button type="button" class="btn btn-default" id="startButton">I want wine !</button>
+        <button type="button" class="btn btn-default" id="stopButton">Okay, I'm drunk ...</button>
+        <div id="result" style="font-size:large;"></div>
     </div>
-    <div class="col-md-6">
-        <img src="wine.jpg" alt="Hummmm mulled wine" style="height:80%" class="img-thumbnail"/>
+    <div class="col-md-4">
+        <img src="wine.gif" alt="Hummmm mulled wine" class="img-responsive"/>
     </div>
 </body>
 
@@ -29,10 +30,15 @@
         });
     };
 
+    var interval;
+
     $(document).ready(function() {
-        $("#clickButton").on("click", function() {
-            setInterval(callMake, 1000);
-        })
+        $("#startButton").on("click", function() {
+            interval = setInterval(callMake, 1000);
+        });
+        $("#stopButton").on("click", function() {
+            clearInterval(interval);
+        });
     });
 
 </script>
