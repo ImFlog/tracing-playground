@@ -1,0 +1,6 @@
+spring.application.name: barman
+
+server:
+  port: 8081
+
+hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds: 5000

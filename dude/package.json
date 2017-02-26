@@ -1,0 +1,25 @@
+{
+  "name": "wine",
+  "version": "0.0.1",
+  "description": "An example module to illustrate the usage of javascript distributed tracing",
+  "author": "Florian Garcia",
+  "main": "lib/foo.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ImFlog/DummyTracing"
+  },
+  "dependencies": {
+    "express": "4.14.x",
+    "zipkin": "0.5.1",
+    "zipkin-context-cls": "0.2.1",
+    "zipkin-instrumentation-express": "0.5.1",
+    "zipkin-transport-http": "0.5.1",
+    "zipkin-instrumentation-cujojs-rest": "0.5.1",
+    "rest": "2.0.0",
+    "sleep": "*",
+    "path": "0.12.7"
+  },
+  "private": true,
+  "analyze": true,
+  "license": "MIT"
+}

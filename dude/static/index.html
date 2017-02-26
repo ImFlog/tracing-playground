@@ -1,0 +1,46 @@
+<html>
+
+<script
+        src="https://code.jquery.com/jquery-3.1.1.min.js"
+        integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+        crossorigin="anonymous"></script>
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+      integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+<body>
+    <h1>Mulled wine application</h1>
+    <br/>
+    <div class="col-md-8">
+        <button type="button" class="btn btn-default" id="startButton">I want wine !</button>
+        <button type="button" class="btn btn-default" id="stopButton">Okay, I'm drunk ...</button>
+        <div id="result" style="font-size:large;"></div>
+    </div>
+    <div class="col-md-4">
+        <img src="wine.gif" alt="Hummmm mulled wine" class="img-responsive"/>
+        <center><i style="font-size:small">kincsesd.tumblr.com</i></center>
+    </div>
+</body>
+
+<script type="text/javascript">
+    var callMake = function() {
+        $.ajax({
+            url: "/cocktail"
+        }).done(function(result) {
+            $("#result").append("<br/>" + result);
+        });
+    };
+
+    var interval;
+
+    $(document).ready(function() {
+        $("#startButton").on("click", function() {
+            interval = setInterval(callMake, 1000);
+        });
+        $("#stopButton").on("click", function() {
+            clearInterval(interval);
+        });
+    });
+
+</script>
+</html>

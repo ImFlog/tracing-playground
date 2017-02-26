@@ -1,9 +1,0 @@
-spring:
-  application:
-    name: winemaker
-  sleuth.sampler.percentage: 1
-
-server:
-  port: 8080
-
-hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds: 10000
