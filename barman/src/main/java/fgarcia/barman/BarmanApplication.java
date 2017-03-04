@@ -8,14 +8,9 @@ import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
 @EnableFeignClients
-public class WineMakingApplication {
+public class BarmanApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(WineMakingApplication.class, args);
-    }
-
-    @Bean
-    public Sampler customSampler() {
-        return span -> (Thread.currentThread().getId() % 2 == 0);
+        SpringApplication.run(BarmanApplication.class, args);
     }
 }

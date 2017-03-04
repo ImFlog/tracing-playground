@@ -11,5 +11,5 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public interface ShakerClient {
 
     @RequestMapping(value = "/shake", method = RequestMethod.GET)
-    Boolean shake();
+    String shake();
 }

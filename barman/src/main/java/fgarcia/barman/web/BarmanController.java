@@ -43,12 +43,12 @@ public class BarmanController {
         long startTime = System.currentTimeMillis();
 
         // Get a glass + fetch ingredient parallel
-        Boolean glass = getGlass();
+        getGlass();
         // Gather ingredients by the Clerk
-        Boolean ingredients = clerkClient.fetchIngredients();
+        String ingredients = clerkClient.fetchIngredients();
 
         // Shake => Another java service
-        Boolean shaked = shakerClient.shake();
+        String shaked = shakerClient.shake();
 
         return "Served in " + (System.currentTimeMillis() - startTime) + " by " + tracer.getCurrentSpan().traceIdString();
     }
@@ -58,12 +58,11 @@ public class BarmanController {
      *
      * @throws InterruptedException
      */
-    private Boolean getGlass() throws InterruptedException {
+    private void getGlass() throws InterruptedException {
         Span s = tracer.createSpan("glass");
         logger.info("Fetching a glass");
         tracer.addTag("type", "old fashioned");
         Thread.sleep(100);
         tracer.close(s);
-        return true;
     }
 }

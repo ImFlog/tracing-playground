@@ -11,5 +11,5 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public interface ClerkClient {
 
     @RequestMapping(value = "/fetchIngredients", method = RequestMethod.GET)
-    Boolean fetchIngredients();
+    String fetchIngredients();
 }

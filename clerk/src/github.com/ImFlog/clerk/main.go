@@ -15,7 +15,7 @@ func main() {
 	collector, err := zipkintracer.NewHTTPCollector("http://localhost:9411/api/v1/spans")
 	// Create the tracer
 	tracer, err := zipkintracer.NewTracer(
-		zipkintracer.NewRecorder(collector, false, "localhost:8082", "spice"),
+		zipkintracer.NewRecorder(collector, false, ":8082", "clerk"),
 	)
 	if err != nil {
 		log.Fatal(err)
@@ -24,10 +24,7 @@ func main() {
 	opentracing.InitGlobalTracer(tracer)
 	log.Println("Starting HTTP service at 8082")
 
-	// Endpoint which returns html graph
-	http.HandleFunc("/addSpice", func(w http.ResponseWriter, r *http.Request) {
-		var serverSpan opentracing.Span
-		appSpecificOperationName := "spicing"
+	http.HandleFunc("/fetchIngredients", func(w http.ResponseWriter, r *http.Request) {
 		// Wire the request context to a span
 		wireContext, err := opentracing.GlobalTracer().Extract(
 			opentracing.HTTPHeaders,
@@ -35,17 +32,36 @@ func main() {
 		if err != nil {
 			log.Print(err)
 		}
-		// Create a new span (use the wired context)
-		serverSpan = opentracing.StartSpan(
-			appSpecificOperationName,
-			ext.RPCServerOption(wireContext))
-
-		// Always close spans
-		defer serverSpan.Finish()
-
-		time.Sleep(100 * time.Millisecond)
-		fmt.Fprint(w, "Some spice !")
+		getMilk(wireContext)
+		getIce(wireContext)
+		fmt.Fprint(w, "Good milk and ice for you !")
 	})
 
 	log.Fatal(http.ListenAndServe(":8082", nil))
+}
+
+func getMilk(context opentracing.SpanContext) {
+	var serverSpan opentracing.Span
+	appSpecificOperationName := "milk"
+	// Create a new span (use the wired context)
+	serverSpan = opentracing.StartSpan(
+		appSpecificOperationName,
+		ext.RPCServerOption(context))
+
+	time.Sleep(100 * time.Millisecond)
+	// Always close spans
+	serverSpan.Finish()
+}
+
+func getIce(context opentracing.SpanContext) {
+	var serverSpan opentracing.Span
+	appSpecificOperationName := "ice"
+	// Create a new span (use the wired context)
+	serverSpan = opentracing.StartSpan(
+		appSpecificOperationName,
+		ext.RPCServerOption(context))
+
+	time.Sleep(100 * time.Millisecond)
+	// Always close spans
+	serverSpan.Finish()
 }

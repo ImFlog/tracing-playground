@@ -14,7 +14,7 @@ var ctxImpl = new CLSContext('zipkin');
 
 // Add a http transport to local zipkin instance
 var recorder = new BatchRecorder({
-  logger: new HttpLogger({
+    logger: new HttpLogger({
     endpoint: 'http://localhost:9411/api/v1/spans'
   })
 });
@@ -23,6 +23,12 @@ var tracer = new Tracer({
     ctxImpl,
     recorder
 });
+
+// Add the Zipkin middleware
+app.use(zipkinMiddleware({
+  tracer,
+  serviceName: 'dude' // name of this application
+}));
 
 // instrument the client
 var {restInterceptor} = require('zipkin-instrumentation-cujojs-rest');
@@ -33,12 +39,6 @@ app.use((req, res, next) => {
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Accept, X-B3-TraceId, X-B3-ParentSpanId, X-B3-SpanId, X-B3-Sampled');
   next();
 });
-
-// Add the Zipkin middleware
-app.use(zipkinMiddleware({
-  tracer,
-  serviceName: 'dude' // name of this application
-}));
 
 // Configure REST endpoints
 app.use(express.static(path.join(__dirname, 'static')));
@@ -54,6 +54,6 @@ app.get('/cocktail', (req,res) => {
 });
 
 // Run the server
-app.listen(8080, "localhost", function(){
-	console.log("Running on http://localhost:8080\n");
+app.listen(8080, () => {
+	console.log("Running on port 8080\n");
 });
