@@ -1,3 +1,6 @@
+// use higher-precision time than milliseconds
+process.hrtime = require('browser-process-hrtime');
+
 var express = require('express')
 var sleep = require('sleep');
 var rest = require('rest');
@@ -33,6 +36,7 @@ app.use(zipkinMiddleware({
 // instrument the client
 var {restInterceptor} = require('zipkin-instrumentation-cujojs-rest');
 var zipkinRest = rest.wrap(restInterceptor, {tracer, serviceName: 'dude'});
+
 // Allow cross-origin, traced requests. See http://enable-cors.org/server_expressjs.html
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');

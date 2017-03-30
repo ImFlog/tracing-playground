@@ -16,7 +16,9 @@ func main() {
 	// Create the tracer
 	tracer, err := zipkintracer.NewTracer(
 		zipkintracer.NewRecorder(collector, false, ":8082", "clerk"),
+		zipkin.ClientServerSameSpan(true),
 	)
+
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -48,9 +50,10 @@ func getMilk(context opentracing.SpanContext) {
 		appSpecificOperationName,
 		ext.RPCServerOption(context))
 
-	time.Sleep(100 * time.Millisecond)
 	// Always close spans
-	serverSpan.Finish()
+    defer serverSpan.Finish()
+
+	time.Sleep(100 * time.Millisecond)
 }
 
 func getIce(context opentracing.SpanContext) {
@@ -61,7 +64,8 @@ func getIce(context opentracing.SpanContext) {
 		appSpecificOperationName,
 		ext.RPCServerOption(context))
 
+    // Always close spans
+	defer serverSpan.Finish()
+
 	time.Sleep(100 * time.Millisecond)
-	// Always close spans
-	serverSpan.Finish()
 }

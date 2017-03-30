@@ -1,5 +1,6 @@
 package fgarcia.barman.web;
 
+import com.netflix.hystrix.HystrixCommand;
 import fgarcia.barman.feign.ClerkClient;
 import fgarcia.barman.feign.ShakerClient;
 import org.slf4j.Logger;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 /**
  * Created by Flo on 17/01/2017.
@@ -42,13 +44,17 @@ public class BarmanController {
     public String prepareCocktail() throws ExecutionException, InterruptedException {
         long startTime = System.currentTimeMillis();
 
-        // Get a glass + fetch ingredient parallel
-        getGlass();
-        // Gather ingredients by the Clerk
-        String ingredients = clerkClient.fetchIngredients();
+        // Ask clerk for ingredients
+        Future<String> ingredients = clerkClient.fetchIngredients().queue();
 
-        // Shake => Another java service
-        String shaked = shakerClient.shake();
+        // In the mean time, the barman fetch a glass
+        getGlass();
+
+        // We block, waiting for ingredients
+        ingredients.get();
+
+        // Then we shake
+        shakerClient.shake();
 
         return "Served in " + (System.currentTimeMillis() - startTime) + " by " + tracer.getCurrentSpan().traceIdString();
     }
