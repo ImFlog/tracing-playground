@@ -16,7 +16,6 @@ func main() {
 	// Create the tracer
 	tracer, err := zipkintracer.NewTracer(
 		zipkintracer.NewRecorder(collector, false, ":8082", "clerk"),
-		zipkin.ClientServerSameSpan(true),
 	)
 
 	if err != nil {

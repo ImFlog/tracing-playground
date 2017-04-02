@@ -1,6 +1,5 @@
 package fgarcia.barman.web;
 
-import com.netflix.hystrix.HystrixCommand;
 import fgarcia.barman.feign.ClerkClient;
 import fgarcia.barman.feign.ShakerClient;
 import org.slf4j.Logger;
@@ -59,16 +58,14 @@ public class BarmanController {
         return "Served in " + (System.currentTimeMillis() - startTime) + " by " + tracer.getCurrentSpan().traceIdString();
     }
 
-    /**
-     * Pendant la démo => passer ça en async
-     *
-     * @throws InterruptedException
-     */
     private void getGlass() throws InterruptedException {
         Span s = tracer.createSpan("glass");
         logger.info("Fetching a glass");
         tracer.addTag("type", "old fashioned");
+        Thread.sleep(50);
+        s.logEvent("fetched");
         Thread.sleep(100);
+        s.logEvent("cleaned");
         tracer.close(s);
     }
 }
