@@ -1,21 +1,21 @@
 package fgarcia.barman.web;
 
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+
+import brave.Span;
+import brave.Tracer;
 import fgarcia.barman.feign.ClerkClient;
 import fgarcia.barman.feign.ShakerClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.sleuth.Span;
-import org.springframework.cloud.sleuth.Tracer;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-
 /**
- * Created by Flo on 17/01/2017.
+ * Created by @im_flog
  */
 @RestController
 public class BarmanController {
@@ -55,17 +55,18 @@ public class BarmanController {
         // Then we shake
         shakerClient.shake();
 
-        return "Served in " + (System.currentTimeMillis() - startTime) + " by " + tracer.getCurrentSpan().traceIdString();
+        return "Served in " + (System.currentTimeMillis() - startTime) + " by " + tracer.currentSpan().context().traceIdString();
     }
 
     private void getGlass() throws InterruptedException {
-        Span s = tracer.createSpan("glass");
+        Span s = tracer.nextSpan().start();
+        s.name("glass");
         logger.info("Fetching a glass");
-        tracer.addTag("type", "old fashioned");
+        s.tag("type", "old fashioned");
         Thread.sleep(50);
-        s.logEvent("fetched");
+        s.annotate("fetched");
         Thread.sleep(100);
-        s.logEvent("cleaned");
-        tracer.close(s);
+        s.annotate("cleaned");
+        s.finish();
     }
 }

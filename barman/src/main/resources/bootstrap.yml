@@ -3,4 +3,5 @@ spring.application.name: barman
 server:
   port: 8081
 
+feign.hystrix.enabled: true
 hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds: 5000

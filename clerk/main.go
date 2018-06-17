@@ -1,10 +1,11 @@
 package main
 
 import (
-	"net/http"
-	"log"
 	"fmt"
+	"log"
+	"net/http"
 	"time"
+
 	"github.com/opentracing/opentracing-go"
 	"github.com/opentracing/opentracing-go/ext"
 	"github.com/openzipkin/zipkin-go-opentracing"
@@ -33,38 +34,35 @@ func main() {
 		if err != nil {
 			log.Print(err)
 		}
-		getMilk(wireContext)
-		getIce(wireContext)
+		serverSpan := opentracing.StartSpan("clerk", ext.RPCServerOption(wireContext))
+		defer serverSpan.Finish()
+
+		getMilk(serverSpan.Context())
+		getIce(serverSpan.Context())
 		fmt.Fprint(w, "Good milk and ice for you !")
 	})
 
 	log.Fatal(http.ListenAndServe(":8082", nil))
 }
 
-func getMilk(context opentracing.SpanContext) {
-	var serverSpan opentracing.Span
-	appSpecificOperationName := "milk"
-	// Create a new span (use the wired context)
-	serverSpan = opentracing.StartSpan(
-		appSpecificOperationName,
-		ext.RPCServerOption(context))
-
+func getMilk(parentContext opentracing.SpanContext) {
+	// Create a new span (using the parent span context)
+	milkSpan := opentracing.StartSpan(
+		"milk",
+		opentracing.ChildOf(parentContext))
 	// Always close spans
-    defer serverSpan.Finish()
+	defer milkSpan.Finish()
 
 	time.Sleep(100 * time.Millisecond)
 }
 
-func getIce(context opentracing.SpanContext) {
-	var serverSpan opentracing.Span
-	appSpecificOperationName := "ice"
-	// Create a new span (use the wired context)
-	serverSpan = opentracing.StartSpan(
-		appSpecificOperationName,
-		ext.RPCServerOption(context))
+func getIce(parentContext opentracing.SpanContext) {
+	// Create a new span (use the parent span context)
+	iceSpan := opentracing.StartSpan(
+		"ice",
+		opentracing.ChildOf(parentContext))
+	// Always close spans
+	defer iceSpan.Finish()
 
-    // Always close spans
-	defer serverSpan.Finish()
-
-	time.Sleep(100 * time.Millisecond)
+	time.Sleep(150 * time.Millisecond)
 }
